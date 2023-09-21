@@ -56,7 +56,6 @@ ul.menu {
     width: 300px;
     height: 100vh;
     z-index: 1; 
-    transition: all ease-in-out 0.4s;
 }
 
 ul.menu.menu--show {

@@ -1,19 +1,23 @@
 const loading = document.getElementById("js-loading");
+const menu = document.querySelector(".menu");
+const menuIcon = document.getElementById("icon");
+const selectedChannel = document.getElementById('js-title');
+const program = document.getElementById("js-schedule");
 
-function menuAnimation() {
-
-}
+let visibleMenu = false;
 
 function toggleMenu() {
-    const menu = document.getElementById("menu");
-    const menuIcon = document.getElementById("icon");
 
-    if (menu.className === 'menu') {
+    if (!visibleMenu) {
         menu.className = 'menu menu--show';
         menuIcon.className = 'fas fa-times';
-    } else {
+        menu.style.transition = '0.5s ease-in-out';
+        visibleMenu = true;
+    }
+    else {
         menu.className = 'menu';
         menuIcon.className = 'fas fa-bars';
+        visibleMenu = false;
     }
 
     console.log(menu);
@@ -21,8 +25,6 @@ function toggleMenu() {
 }
 
 function setChannel(channel) {
-
-    const selectedChannel = document.getElementById('js-title');
 
     selectedChannel.innerHTML = "";
 
@@ -67,28 +69,49 @@ function getChannelSchedule(channel) {
 }
 
 function renderData(data) {
+    const timeNow = new Date();
 
-    let htmlToRender = data.map((item) => {
+    let sortedShows = data.sort((showA, showB) => new Date(showA.start) - new Date(showB.start));
+    allShowsSorted = sortedShows;
 
-        let options = {
-            hour: "numeric",
-            minute: "numeric",
-        };
+    console.log(allShowsSorted)
 
-        const time = new Date(item.start);
-        const formated = new Intl.DateTimeFormat("sv-SE", options).format(time);
-        item.formated = formated;
+    const filteredShows = sortedShows.filter(show => {
+        const showTime = new Date(show.start);
+        showTime.setFullYear(timeNow.getFullYear());
+        showTime.setMonth(timeNow.getMonth());
+        showTime.setDate(timeNow.getDate());
 
-        return `<li class="list-group-item">${item.formated}<div>${item.name}</div></li>`;
+        return showTime > timeNow;
+    });
+
+    function addZero(i) {
+        if (i < 10) { i = "0" + i }
+        return i;
+    }
+
+    let htmlToRender = filteredShows.map((show) => {
+        const time = new Date(show.start);
+        const hours = addZero(time.getHours());
+        const minutes = addZero(time.getMinutes());
+        const showStart = `${hours}:${minutes}`;
+        show.showStart = showStart;
+
+        return `<li class="list-group-item">${show.showStart}<div>${show.name}</div></li>`;
     })
         .join("");
 
-
-
-    const program = document.getElementById("js-schedule");
-
     program.innerHTML = '<ul class="list-group list-group-flush"><li class="list-group-item show-previous">Visa tidigare program</li>' + htmlToRender + '</ul>';
+
+    const showPrevious = document.querySelector(".show-previous");
+    showPrevious.addEventListener("click", showPreviousShows);
 }
+
+// Inte klar
+function showPreviousShows() {
+    console.log("clicked");
+}
+
 
 function showLoading() {
     loading.classList.remove("hidden");
