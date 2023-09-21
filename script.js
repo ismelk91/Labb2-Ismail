@@ -20,8 +20,6 @@ function toggleMenu() {
         visibleMenu = false;
     }
 
-    console.log(menu);
-    console.log(menuIcon);
 }
 
 function setChannel(channel) {
@@ -72,9 +70,6 @@ function renderData(data) {
     const timeNow = new Date();
 
     let sortedShows = data.sort((showA, showB) => new Date(showA.start) - new Date(showB.start));
-    allShowsSorted = sortedShows;
-
-    console.log(allShowsSorted)
 
     const filteredShows = sortedShows.filter(show => {
         const showTime = new Date(show.start);
@@ -112,14 +107,11 @@ function showPreviousShows() {
     console.log("clicked");
 }
 
-
 function showLoading() {
     loading.classList.remove("hidden");
-    console.log(loading);
 }
 
 function hideLoading() {
     loading.classList.add("hidden");
-    console.log(loading);
 }
 
